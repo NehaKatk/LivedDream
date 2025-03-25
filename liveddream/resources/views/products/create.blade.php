@@ -3,9 +3,9 @@
     <div class="content">
         <h2 class="mb-4">Create New Product</h2>
 
-        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('products.store') }}" method="POST" id="productForm" enctype="multipart/form-data" onsubmit="return false;">
             @csrf
-            <button class="btn btn-primary" type="submit" id="product">Save Product</button>
+            <button class="btn btn-primary"  id="product">Save Product</button>
             <div class="row">
                 <div class="col-md-6">
 
@@ -39,23 +39,42 @@
                                 <input type="text" name="name" class="form-control" placeholder="Enter product name">
                                 <span id="product_name_error" style="color: red;"></span>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Application Area</label>
+                                <input type="text" name="app_area" class="form-control" placeholder="Enter application area">
+                                
+                            </div>
                             <h5>Product Size</h5>
                             <div class="row" id="size-container">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Length</label>
                                     <input type="number" name="length[]" class="form-control" value="00"
                                         min="0">
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Width</label>
                                     <input type="number" name="width[]" class="form-control" value="00" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Thickness</label>
+                                    <input type="number" name="thickness[]" class="form-control" value="00"
+                                        min="0">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <label class="form-label">Thickness</label>
-                                    <input type="number" name="thickness[]" class="form-control" value="00"
-                                        min="0">
+                                    <label class="form-label">Unit</label>
+                                    <select name="unit" id="unit" class="form-select">
+                                        <option value="ft" selected>Foot (ft)</option>
+                                        <option value="m">Meter (m)</option>
+                                        <option value="cm">Centimeter (cm)</option>
+                                        <option value="mm">Millimeter (mm)</option>
+                                    
+                                        <option value="inch">Inch (in)</option>
+                                     
+                                        
+                                    </select>
+                                   
                                 </div>
                                 <div class="col-md-6">
                                     <label for="" class="form-label">Other</label>
@@ -110,7 +129,7 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Estimated Delivery Time</label>
-                                <input type="datetime-local" name="estimated_delivery_time" class="form-control"
+                                <input type="text" name="estimated_delivery_time" class="form-control"
                                     placeholder="Enter estimated delivery time">
                             </div>
                             {{-- <button class="btn btn-primary">Save</button> --}}
@@ -128,15 +147,18 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body" >
-                                                <form>
+                                                
                                                     <div style="display:flex;flex-direction:row;gap:5%;width:100% ;">
                                                         <div class="column" >
                                                             <div class="mb-3">
                                                                 <label class="form-label">Select Image</label>
                                                                 <div class="border p-3 text-center" style="border-style: dashed;">
-                                                                    <input type="file" class="form-control" id="productImage" accept="image/*" hidden>
-                                                                    <label for="productImage" class="d-block">📤 Drag your file(s) or <a href="#">browse</a></label>
+                                                                    <input type="file" class="form-control d-none" id="productImage" accept="image/*" onchange="previewImage(event)">
+                                                                    <label for="productImage" class="d-block cursor-pointer">📤 Drag your file(s) or <a href="#">browse</a></label>
                                                                     <small class="text-muted">Max 10 MB files are allowed</small>
+                                                                
+                                                                    <!-- Image Preview Section -->
+                                                                    <div id="imagePreview" class="mt-3"></div>
                                                                 </div>
                                                             </div>
                                                             <div class="mb-3" >
@@ -156,11 +178,11 @@
                                                             <div class="row">
                                                                 <div class="col-md-6" style="display:flex;flex-direction:column">
                                                                     <label for="purchaseCost" class="form-label">Purchase cost*</label>
-                                                                    <input type="number" class="form-control" id="purchaseCost" placeholder="₹ 00" required>
+                                                                    <input type="number" class="form-control" id="purchaseCost" name="purchase_cost" value="0" placeholder="₹ 00" required>
                                                                 </div>
                                                                 <div class="col-md-6" style="display:flex;flex-direction:column">
                                                                     <label for="sellingPrice" class="form-label">Selling price*</label>
-                                                                    <input type="number" class="form-control" id="sellingPrice" placeholder="₹ 00" required>
+                                                                    <input type="number" class="form-control" id="sellingPrice" name="selling_price" value="0" placeholder="₹ 00" required>
                                                                 </div>
                                                             </div>
                                                             <div class="mb-3">
@@ -178,7 +200,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </form>
+                                                
                                             </div>
                                             <!-- <div class="modal-footer">
                                                
@@ -188,7 +210,64 @@
                                     </div>
                                 </div>
 
-                                
+                                 {{-- <!-- Modal for adding images -->
+                                 <div class="modal fade" id="addproduct" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Product Details</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+
+                                            <div class="modal-body">
+                                                <form>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Select Image</label>
+                                                        <input type="file" class="form-control" id="productImage" accept="image/*">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Product Code</label>
+                                                        <input type="text" class="form-control" id="productCode">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Product Color</label>
+                                                        <input type="text" class="form-control" id="productColor">
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Purchase Cost*</label>
+                                                        <input type="number" class="form-control" id="purchaseCost" required>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Selling Price*</label>
+                                                        <input type="number" class="form-control" id="sellingPrice" required>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="stockAvailable" checked>
+                                                        <label class="form-check-label" for="stockAvailable">Stock Available</label>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> --}}
+
+                                <!-- Sample Image Upload -->
+                                {{-- <h6>Sample Images</h6>
+                                <div class="border p-3 text-center" style="border-style: dashed;">
+                                    Drag your file(s) or <a href="#">browse</a><br>
+                                    Max 10 MB files are allowed
+                                </div>
+                            </div> --}}
+                        </div>
 
 
                                 <table class="table table-bordered mt-3">
@@ -219,16 +298,46 @@
 
         </form>
     </div>
+    {{-- <script>
+      document.getElementById("product").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default button behavior
+        let form = document.getElementById("productForm");
+        
+        // Manually submit the form
+        form.submit();
+      });
+    </script> --}}
     <script>
+               function previewImage(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById('imagePreview');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewContainer.innerHTML = `
+                    <img src="${e.target.result}" class="img-fluid mt-2" style="max-height: 150px; border-radius: 10px;">
+                    <p class="text-muted mt-2">${file.name}</p>
+                `;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewContainer.innerHTML = "";
+        }
+    }
         document.addEventListener("DOMContentLoaded", function() {
-            let form = document.querySelector("form");
+            
+     
+             let form = document.getElementById("productForm");
 
             let saveButton = document.getElementById('product');
 
             if (saveButton) {
-                saveButton.addEventListener('click', function(event) {
-                    if (!validateForm()) {
-                        event.preventDefault();
+                saveButton.addEventListener("click", function (event) {
+                    event.preventDefault(); // Prevent the form from submitting automatically
+
+                    if (validateForm()) {
+                        form.submit(); // Submit the form only if validation passes
                     }
                 });
             }
@@ -261,11 +370,12 @@
                 }
 
                 if (isValid) {
-                    toastr.success('Product added successfully.');
-                    setTimeout(function() {
-                        window.location.href = '/products';
-                    }, 8000);
+                    // toastr.success('Product added successfully.');
+                    // setTimeout(function() {
+                    //     window.location.href = '/products';
+                    // }, 8000);
                     return true;
+                    
                 }
 
                 return false;
@@ -288,7 +398,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Value</label>
-                    <input type="number" name="custom_values[]" class="form-control" value="00" min="0">
+                    <input type="text" name="custom_values[]" class="form-control" >
                 </div>
             `;
 

@@ -36,7 +36,12 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
+        $request->validate([
+            'company_id' => 'required|integer|exists:companies,id',  // Ensure it exists in the companies table
+            'category_id' => 'required',
+            'name' => 'required|string',
+         
+        ]);
         // Create Product
         $product = Product::create([
             'company_id' => $request->company_id,
