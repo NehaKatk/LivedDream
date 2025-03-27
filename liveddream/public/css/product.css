@@ -50,3 +50,46 @@
 }
 
 
+container {
+    max-width: 1000px;
+    margin-top: 20px;
+}
+.card {
+    padding: 20px;
+}
+.btn-save {
+    float: right;
+    margin-top: 10px;
+    /* width: 15%; */
+}
+#save{
+    position: absolute;
+    right:30%;
+    top: 20px;
+    width: 15%;
+}
+.table{
+   width:100%;
+}
+.container-fluid{
+    width:100%;
+}
+
+
+.upload-box{
+    border:2px dashed blue;
+    width:100%;
+    justify-content:center;
+    padding:10px;
+    margin: 10px;
+    height:40%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    cursor: pointer;
+    /* position: relative; */
+}
+
+
+
