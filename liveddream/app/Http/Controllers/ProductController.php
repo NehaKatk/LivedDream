@@ -36,6 +36,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->validate([
             'company_id' => 'required|integer|exists:companies,id',  // Ensure it exists in the companies table
             'category_id' => 'required',
@@ -65,6 +66,7 @@ if (!empty($request->length[0]) && $request->length[0] != 0) {
     $sizes[] = [
         'key' => 'Length', 
         'value' => $request->length[0], 
+        'unit' => $request->unit, 
         'product_id' => $product->id, 
         'user_id' => auth()->id(),
         'created_at' => $timestamp,
@@ -76,6 +78,7 @@ if (!empty($request->width[0]) && $request->width[0] != 0) {
     $sizes[] = [
         'key' => 'Width', 
         'value' => $request->width[0], 
+        'unit' => $request->unit, 
         'product_id' => $product->id, 
         'user_id' => auth()->id(),
         'created_at' => $timestamp,
@@ -87,6 +90,7 @@ if (!empty($request->thickness[0]) && $request->thickness[0] != 0) {
     $sizes[] = [
         'key' => 'Thickness', 
         'value' => $request->thickness[0], 
+        'unit' => $request->unit, 
         'product_id' => $product->id, 
         'user_id' => auth()->id(),
         'created_at' => $timestamp,
@@ -101,6 +105,7 @@ if ($request->has('custom_keys') && $request->has('custom_values')) {
             $sizes[] = [
                 'key' => $key,
                 'value' => $request->custom_values[$index],
+                'unit' => $request->unit, 
                 'product_id' => $product->id,
                 'user_id' => auth()->id(),
                 'created_at' => $timestamp,

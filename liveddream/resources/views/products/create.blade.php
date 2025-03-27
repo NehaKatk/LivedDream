@@ -178,16 +178,16 @@
                                                             <div class="row">
                                                                 <div class="col-md-6" style="display:flex;flex-direction:column">
                                                                     <label for="purchaseCost" class="form-label">Purchase cost*</label>
-                                                                    <input type="number" class="form-control" id="purchaseCost" name="purchase_cost" value="0" placeholder="₹ 00" required>
+                                                                    <input type="number" class="form-control" id="purchaseCost" name="purchase_cost" value="0" min="0" placeholder="₹ 00" required>
                                                                 </div>
                                                                 <div class="col-md-6" style="display:flex;flex-direction:column">
                                                                     <label for="sellingPrice" class="form-label">Selling price*</label>
-                                                                    <input type="number" class="form-control" id="sellingPrice" name="selling_price" value="0" placeholder="₹ 00" required>
+                                                                    <input type="number" class="form-control" id="sellingPrice" name="selling_price" value="0" min="0" placeholder="₹ 00" required>
                                                                 </div>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="discountPrice" class="form-label">Discount price</label>
-                                                                <input type="number" class="form-control" id="discountPrice" placeholder="₹ 00">
+                                                                <input type="number" class="form-control" id="discountPrice" placeholder="₹ 00" min="0">
                                                             </div>
                                                             <div class="form-check">
                                                             
@@ -196,7 +196,7 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                     
-                                                                    <button type="button" class="btn btn-primary">Save</button>
+                                                                    <button type="button" class="btn btn-primary" onclick="saveProduct()">Save</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -308,23 +308,102 @@
       });
     </script> --}}
     <script>
-               function previewImage(event) {
-        const file = event.target.files[0];
-        const previewContainer = document.getElementById('imagePreview');
+function previewImage(event) {
+    const file = event.target.files[0];
+    const previewContainer = document.getElementById('imagePreview');
 
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                previewContainer.innerHTML = `
-                    <img src="${e.target.result}" class="img-fluid mt-2" style="max-height: 150px; border-radius: 10px;">
-                    <p class="text-muted mt-2">${file.name}</p>
-                `;
-            };
-            reader.readAsDataURL(file);
-        } else {
-            previewContainer.innerHTML = "";
-        }
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewContainer.innerHTML = `
+                <img src="${e.target.result}" class="img-fluid mt-2" style="max-height: 150px; border-radius: 10px;">
+                <p class="text-muted mt-2">${file.name}</p>
+            `;
+            previewContainer.dataset.imgSrc = e.target.result; // ✅ Properly storing image URL
+        };
+        reader.readAsDataURL(file);
+    } else {
+        previewContainer.innerHTML = "";
+        delete previewContainer.dataset.imgSrc; // ✅ Properly removing the attribute
     }
+}
+
+function saveProduct() {
+    const previewContainer = document.getElementById('imagePreview');
+    const productImage = previewContainer.dataset.imgSrc || ''; // ✅ Properly accessing stored image
+    const productName = document.getElementById('pdfName').value.trim();
+    const productCode = document.getElementById('productCode').value.trim();
+    const productColor = document.getElementById('productColor').value.trim();
+    const SellingPrice = document.getElementById('sellingPrice').value.trim();
+    const discountPrice = document.getElementById('discountPrice').value.trim();
+    const purchaseCost = document.getElementById('purchaseCost').value.trim();
+    let stockAvailable = document.getElementById('stockAvailable').value.trim();
+    stockAvailable = stockAvailable == 'on' ? 1 : 0;
+    const modal = document.querySelector('.modal'); // ✅ Ensure you target the correct modal
+
+    if (!productName || !productCode || !productColor || !productImage) {
+        alert("Please fill all fields and select an image before saving!");
+        return;
+    }
+
+    const tableBody = document.querySelector('table tbody');
+
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+    <td>
+        <img src="${productImage}" style="max-height: 50px; border-radius: 5px;">
+        <input type="hidden" name="product_image[]" value="${productImage}">
+    </td>
+    <td>
+        ${productName}
+        <input type="hidden" name="product_name[]" value="${productName}">
+    </td>
+    <td>
+        ${productCode}
+        <input type="hidden" name="product_code[]" value="${productCode}">
+    </td>
+    <td>
+        ${productColor}
+        <input type="hidden" name="product_color[]" value="${productColor}">
+    </td>
+   
+      
+        <input type="hidden" name="purchase_cost[]" value="${purchaseCost}">
+    
+   
+        
+        <input type="hidden" name="selling_price[]" value="${SellingPrice}">
+    
+   
+       
+        <input type="hidden" name="discount_price[]" value="${discountPrice}">
+    
+   
+       
+        <input type="hidden" name="stock_available[]" value="${stockAvailable}">
+    
+`;
+
+    tableBody.appendChild(newRow);
+
+    // Hide the modal after saving
+    const modalInstance = bootstrap.Modal.getInstance(modal); // ✅ Bootstrap 5 method
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+
+    // Optional: Reset form fields
+    document.getElementById('productImage').value = "";
+    document.getElementById('pdfName').value = "";
+    document.getElementById('productCode').value = "";
+    document.getElementById('productColor').value = "";
+    document.getElementById('stockAvailable').value = "";
+    document.getElementById('purchaseCost').value = "";
+    document.getElementById('discountPrice').value = "";
+    document.getElementById('sellingPrice').value = "";
+    previewContainer.innerHTML = "";
+}
+
         document.addEventListener("DOMContentLoaded", function() {
             
      
