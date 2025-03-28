@@ -164,14 +164,17 @@
                                                             <div class="mb-3" >
                                                                 <label for="pdfName" class="form-label">PDF Name</label>
                                                                 <input type="text" class="form-control" id="pdfName" placeholder="Enter PDF Name">
+                                                                <span class="text-danger d-none" id="pdfNameError">Required</span>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="productCode" class="form-label">Product Code</label>
                                                                 <input type="text" class="form-control" id="productCode" placeholder="Enter product code">
+                                                                {{-- <span class="text-danger d-none" id="productCodeError">Required</span> --}}
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="productColor" class="form-label">Product Color</label>
                                                                 <input type="text" class="form-control" id="productColor" placeholder="Enter Color">
+                                                                {{-- <span class="text-danger d-none" id="productCodeError">Required</span> --}}
                                                             </div>
                                                         </div>
                                                         <div class="column">
@@ -179,10 +182,12 @@
                                                                 <div class="col-md-6" style="display:flex;flex-direction:column">
                                                                     <label for="purchaseCost" class="form-label">Purchase cost*</label>
                                                                     <input type="number" class="form-control" id="purchaseCost" name="purchase_cost" value="0" min="0" placeholder="₹ 00" required>
+                                                                    <span class="text-danger d-none" id="purchaseCostError">Required</span>
                                                                 </div>
                                                                 <div class="col-md-6" style="display:flex;flex-direction:column">
                                                                     <label for="sellingPrice" class="form-label">Selling price*</label>
                                                                     <input type="number" class="form-control" id="sellingPrice" name="selling_price" value="0" min="0" placeholder="₹ 00" required>
+                                                                    <span class="text-danger d-none" id="sellingPriceError">Required</span>
                                                                 </div>
                                                             </div>
                                                             <div class="mb-3">
@@ -210,86 +215,44 @@
                                     </div>
                                 </div>
 
-                                 {{-- <!-- Modal for adding images -->
-                                 <div class="modal fade" id="addproduct" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Product Details</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-
-                                            <div class="modal-body">
-                                                <form>
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Select Image</label>
-                                                        <input type="file" class="form-control" id="productImage" accept="image/*">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Product Code</label>
-                                                        <input type="text" class="form-control" id="productCode">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Product Color</label>
-                                                        <input type="text" class="form-control" id="productColor">
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Purchase Cost*</label>
-                                                        <input type="number" class="form-control" id="purchaseCost" required>
-                                                    </div>
-
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Selling Price*</label>
-                                                        <input type="number" class="form-control" id="sellingPrice" required>
-                                                    </div>
-
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="stockAvailable" checked>
-                                                        <label class="form-check-label" for="stockAvailable">Stock Available</label>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-primary">Save</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div> --}}
-
-                                <!-- Sample Image Upload -->
-                                {{-- <h6>Sample Images</h6>
-                                <div class="border p-3 text-center" style="border-style: dashed;">
-                                    Drag your file(s) or <a href="#">browse</a><br>
-                                    Max 10 MB files are allowed
-                                </div>
-                            </div> --}}
+                                 
                         </div>
 
 
-                                <table class="table table-bordered mt-3">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Product Image</th>
-                                            <th>Product Name</th>
-                                            <th>Product Code</th>
-                                            <th>Product Color</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Product rows will go here -->
-                                    </tbody>
-                                </table>
-                                <h6>Sample Images</h6>
-
-                                <div class="border p-3 text-center" style="border-style: dashed;">
-                                    Drag your file(s) or <a href="#">browse</a>
-                                    <br>
-                                    Max 10 MB files are allowed
+                              
+                                <div class="container mt-4">
+                                    <h5 class="mb-3">Product List</h5>
+                                
+                                    <!-- Product Table -->
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mt-3 text-center align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Product Image</th>
+                                                    <th>Product Name</th>
+                                                    <th>Product Code</th>
+                                                    <th>Product Color</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="productTableBody">
+                                                <!-- Dynamic product rows will be added here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                
+                                    <!-- File Upload Section -->
+                                    <h6 class="mt-4">Upload Sample Images</h6>
+                                    <div id="uploadSection" class="border p-3 text-center rounded" style="border-style: dashed; cursor: pointer;">
+                                        <p class="mb-1">Drag your file(s) here or <a href="#" onclick="document.getElementById('imageUpload').click(); return false;">browse</a></p>
+                                        <p class="text-muted">Max 10 MB files are allowed</p>
+                                        <input type="file" id="imageUpload" class="d-none" multiple accept="image/*">
+                                    </div>
+                                
+                                    <!-- Image Preview Section -->
+                                    <div id="imagePreviewContainer" name="imagePreviewContainer" class="row mt-3"></div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -298,16 +261,11 @@
 
         </form>
     </div>
-    {{-- <script>
-      document.getElementById("product").addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent default button behavior
-        let form = document.getElementById("productForm");
-        
-        // Manually submit the form
-        form.submit();
-      });
-    </script> --}}
+   
     <script>
+        let saveButton = document.getElementById('product');
+        let form = document.getElementById("productForm");
+        const selectedFiles = [];
 function previewImage(event) {
     const file = event.target.files[0];
     const previewContainer = document.getElementById('imagePreview');
@@ -329,6 +287,7 @@ function previewImage(event) {
 }
 
 function saveProduct() {
+    // debugger;
     const previewContainer = document.getElementById('imagePreview');
     const productImage = previewContainer.dataset.imgSrc || ''; // ✅ Properly accessing stored image
     const productName = document.getElementById('pdfName').value.trim();
@@ -341,10 +300,23 @@ function saveProduct() {
     stockAvailable = stockAvailable == 'on' ? 1 : 0;
     const modal = document.querySelector('.modal'); // ✅ Ensure you target the correct modal
 
-    if (!productName || !productCode || !productColor || !productImage) {
-        alert("Please fill all fields and select an image before saving!");
-        return;
-    }
+    let valid = true;
+    document.querySelectorAll(".text-danger").forEach(el => el.classList.add("d-none"));
+
+    if (!productImage) valid = showError("imagePreview", "Please select an image", "red");
+    // if (!productName) valid = showError("pdfNameError", "PDF Name is Requied");
+    // if (!productCode) valid = showError("productCodeError", "Product Code is Required");
+    // if (!productColor) valid = showError("productColorError", "Product Color is Required");
+    if (purchaseCost === null || isNaN(Number(purchaseCost)) || purchaseCost == 0) {
+    valid = showError("purchaseCostError", "Product Cost is Required");
+}
+if (SellingPrice === null || isNaN(Number(SellingPrice))  || SellingPrice == 0) {
+    valid = showError("sellingPriceError", "Selling Price is Required");
+}
+
+
+
+    if (!valid) return;
 
     const tableBody = document.querySelector('table tbody');
 
@@ -381,11 +353,18 @@ function saveProduct() {
    
        
         <input type="hidden" name="stock_available[]" value="${stockAvailable}">
+        <td>
+         <button type="button" class="remove-row btn btn-danger btn-sm">
+            <i class="fa fa-trash"></i>
+        </button>
+    </td>
     
 `;
 
     tableBody.appendChild(newRow);
-
+    newRow.querySelector('.remove-row').addEventListener('click', function () {
+    this.closest('tr').remove();
+});
     // Hide the modal after saving
     const modalInstance = bootstrap.Modal.getInstance(modal); // ✅ Bootstrap 5 method
     if (modalInstance) {
@@ -393,7 +372,7 @@ function saveProduct() {
     }
 
     // Optional: Reset form fields
-    document.getElementById('productImage').value = "";
+    document.getElementById('imagePreview').value = "";
     document.getElementById('pdfName').value = "";
     document.getElementById('productCode').value = "";
     document.getElementById('productColor').value = "";
@@ -403,24 +382,117 @@ function saveProduct() {
     document.getElementById('sellingPrice').value = "";
     previewContainer.innerHTML = "";
 }
+function showError(id, msg, color) {
+    document.getElementById(id).classList.remove("d-none");
+    document.getElementById(id).textContent= msg;
+    document.getElementById(id).style.color= color;
+    return false;
+}
 
         document.addEventListener("DOMContentLoaded", function() {
-            
-     
-             let form = document.getElementById("productForm");
+            const imageUpload = document.getElementById('imageUpload');
+    const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    let uploadedImages = new Set(); // Track uploaded images
 
-            let saveButton = document.getElementById('product');
+    // Handle file selection
+    imageUpload.addEventListener('change', function () {
+        previewImages(this.files);
+    });
+
+    // Preview uploaded images
+    function previewImages(files) {
+        Array.from(files).forEach(file => {
+            if (file.size > 10 * 1024 * 1024) {
+                alert("File size must be less than 10MB");
+                return;
+            }
+
+            const fileName = file.name;
+            if (uploadedImages.has(fileName)) {
+                alert("Duplicate image detected: " + fileName);
+                return;
+            }
+            uploadedImages.add(fileName); // Add to Set
+            selectedFiles.push(file);
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const col = document.createElement('div');
+                col.className = "col-md-6 mb-2";
+                col.innerHTML = `
+                    <div class="card shadow-sm">
+                        <img src="${e.target.result}" name="sample_image" class="card-img-top" style="width: 100%; height: 150px; object-fit: cover;" alt="Uploaded Image">
+                        <div class="card-body p-2 text-center">
+                            <button class="btn btn-sm btn-danger remove-img" data-name="${fileName}">Remove</button>
+                        </div>
+                    </div>
+                `;
+                imagePreviewContainer.appendChild(col);
+
+                // Remove image functionality
+                col.querySelector('.remove-img').addEventListener('click', function () {
+                    uploadedImages.delete(fileName); // Remove from Set
+                    col.remove();
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+            const modal = document.getElementById('addproduct');
+
+            modal.addEventListener('hidden.bs.modal', function () {
+                // Clear all input fields
+                // document.getElementById('productImage').value = "";
+                // document.getElementById('pdfName').value = "";
+                // document.getElementById('productCode').value = "";
+                // document.getElementById('productColor').value = "";
+                document.getElementById('purchaseCostError').innerHTML = "";
+                document.getElementById('sellingPriceError').innerHTML = "";
+                // document.getElementById('discountPrice').value = "";
+                // document.getElementById('stockAvailable').checked = true; // Reset checkbox
+
+                // Clear image preview
+                document.getElementById('imagePreview').innerHTML = "";
+            });
+            
+
+            
 
             if (saveButton) {
                 saveButton.addEventListener("click", function (event) {
                     event.preventDefault(); // Prevent the form from submitting automatically
 
                     if (validateForm()) {
-                        form.submit(); // Submit the form only if validation passes
+                        submitFormWithImages();
+                        // form.submit(); // Submit the form only if validation passes
                     }
                 });
             }
+            function submitFormWithImages() {
+    const formData = new FormData(form);
 
+    // Append selected images
+    selectedFiles.forEach((file, index) => {
+        formData.append(`sample_image[${index}]`, file);
+    });
+
+    fetch(form.action, {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+        alert("Product uploaded successfully!");
+        form.reset(); // Reset form after success
+        imagePreviewContainer.innerHTML = ""; // Clear image previews
+        uploadedImages.clear();
+        selectedFiles.length = 0;
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
+}
             function validateForm() {
                 var productName = document.getElementsByName('name')[0].value;
                 var productCategory = document.getElementById('category').value;
@@ -434,7 +506,7 @@ function saveProduct() {
                 let isValid = true;
 
                 if (productName.trim() === '') {
-                    document.getElementById('product_name_error').innerText = 'Product name is required';
+                    document.getElementById('product_name_error').innerText = 'Product name is Required';
                     isValid = false;
                 }
 
@@ -471,17 +543,23 @@ function saveProduct() {
                     newRow.classList.add("row", "mt-2");
 
                     newRow.innerHTML = `
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <label class="form-label">Parameter Name</label>
                     <input type="text" name="custom_keys[]" class="form-control" placeholder="Enter parameter (e.g., Height)">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     <label class="form-label">Value</label>
                     <input type="text" name="custom_values[]" class="form-control" >
                 </div>
+               <div class="col-md-2 text-center">
+                <button type="button" class="btn btn-danger mt-5 btn-sm remove-row">X</button>
+            </div>
             `;
 
                     container.appendChild(newRow);
+                    newRow.querySelector(".remove-row").addEventListener("click", function () {
+                        newRow.remove();
+                    });
                 });
             } else {
                 console.error("Element not found: Ensure 'add-size' button and 'size-container' exist.");
