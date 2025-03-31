@@ -22,7 +22,9 @@ return new class extends Migration
             $table->enum('warranty_type', ['days', 'months', 'years']); // Restricts values to specific options
             $table->unsignedBigInteger('adhesive_id');
             $table->decimal('labor_charge', 10, 2)->default(0);
-            $table->date('deliver_time')->nullable();
+            $table->date('estimate_delivery_duration')->nullable();
+            $table->enum('estimate_delivery_type', ['days', 'months']); // Restricts values to specific options
+
             $table->string('image')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

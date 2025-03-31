@@ -127,10 +127,21 @@
                                 <input type="text" name="labor_charges" class="form-control"
                                     placeholder="Enter Labor Charges">
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 row">
                                 <label class="form-label">Estimated Delivery Time</label>
-                                <input type="text" name="estimated_delivery_time" class="form-control"
-                                    placeholder="Enter estimated delivery time">
+                                {{-- <input type="text" name="estimated_delivery_time" class="form-control"
+                                    placeholder="Enter estimated delivery time"> --}}
+                                    <div class="col-md-6">
+                                        <input type="number" name="estimated_delivery_time" class="form-control"
+                                            placeholder="Duration" min="0">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select name="estimated_delivery_type" class="form-select">
+                                            <option value="days">Days</option>
+                                            <option value="months">Months</option>
+                                            <option value="years">Years</option>
+                                        </select>
+                                    </div>
                             </div>
                             {{-- <button class="btn btn-primary">Save</button> --}}
                         </div>
@@ -226,7 +237,7 @@
                                     <!-- Product Table -->
                                     <div class="table-responsive">
                                         <table class="table table-bordered mt-3 text-center align-middle">
-                                            <thead class="table-light">
+                                            {{-- <thead class="table-light">
                                                 <tr>
                                                     <th>Product Image</th>
                                                     <th>Product Name</th>
@@ -234,7 +245,7 @@
                                                     <th>Product Color</th>
                                                     <th>Action</th>
                                                 </tr>
-                                            </thead>
+                                            </thead> --}}
                                             <tbody id="productTableBody">
                                                 <!-- Dynamic product rows will be added here -->
                                             </tbody>
@@ -488,6 +499,7 @@ function showError(id, msg, color) {
         imagePreviewContainer.innerHTML = ""; // Clear image previews
         uploadedImages.clear();
         selectedFiles.length = 0;
+        window.location.reload();
     })
     .catch(error => {
         console.error("Error:", error);

@@ -23,4 +23,9 @@ class ProductImage extends Model
         'sample_status',
        'user_id'
     ];
+     // Relationship with Product model
+     public function product()
+     {
+         return $this->belongsTo(Product::class, 'product_id');
+     }
 }

@@ -16,4 +16,10 @@ class Company extends Model
     {
         return $this->hasMany(CompanyGodownDetail::class);
     }
+        // A company has many products
+        public function products()
+        {
+            return $this->hasMany(Product::class, 'company_id');
+        }
+        
 }

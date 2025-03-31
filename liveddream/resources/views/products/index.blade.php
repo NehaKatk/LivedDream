@@ -7,7 +7,7 @@
         <div class="col-md-12" style="width:100%">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="fw-bold">Products</h2>
-                <button class="btn btn-primary px-3"><i class="fas fa-plus"></i> Create New Product</button>
+                <a class="btn btn-primary px-3" href="/products"><i class="fas fa-plus"></i> Create New Product</a>
             </div>
 
             <!-- Search & Filter -->
@@ -34,7 +34,7 @@
             </div>
 
             <!-- Product Table -->
-            <div class="card mt-3 border-0 shadow-sm " style="width:1200px" >
+            {{-- <div class="card mt-3 border-0 shadow-sm " style="width:1200px" >
                 <table class="table align-middle">
                     <thead class="table-light">
                         <tr>
@@ -78,9 +78,64 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div> --}}
 
-           
+            <div class="card mt-3 border-0 shadow-sm" style="width:1200px">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th></th>
+                            <th class="text-center">Sr No</th>
+                         
+                            <th class="text-center">Products</th>
+                            <th class="text-center">Code</th>
+                            <th class="text-center">Company</th>
+                            <th class="text-center">Category</th>
+                            <th class="text-center">Warranty</th>
+                            <th class="text-center">Actual Price</th>
+                            <th class="text-center">Selling Price</th>
+                            <th class="text-center">Action</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($products as $index => $product)
+                            <tr>
+                                <td></td>
+                                <td class="text-center">{{ $index + 1 }}</td>
+                                <td class="text-center">
+                                    @if ($product->images->isNotEmpty())
+                                        <img src="{{ asset($product->images->first()->product_image) }}" alt="Product Image" width="50" height="50">
+                                    @else
+                                        No Image
+                                    @endif
+                                {{ $product->name }}</td>
+                                <td class="text-center"> {{ $product->images->first()->product_code ?? '--' }}</td>
+                                <td class="text-center">{{ $product->company->name ?? '--' }}</td>
+                                <td class="text-center">{{ $product->category->name ?? '--' }}</td>
+                                <td class="text-center">{{ $product->warranty_duration ? $product->warranty_duration . ' ' . $product->warranty_type : 'No Warranty' }}</td>
+                                <td class="text-center">{{ $product->images->first()->purchase_cost ?? '--' }}</td>
+                                <td class="text-center">{{ $product->images->first()->selling_price ?? '--' }}</td>
+                                <td class="text-center"><div class="dropdown">
+                                    <button class="btn btn-light " data-bs-toggle="dropdown">
+                                        <!-- <i class="fas fa-eye"></i> -->
+                                        <i class="fa-solid fa-ellipsis-vertical"></i> <!-- Three-dot icon -->
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('product.edit', $product->id) }}">Edit</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="#">Delete</a>
+                                        </li>
+                                    </ul>
+                                </div></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            
            
 
 

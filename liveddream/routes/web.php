@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/adhesive', [AdhesiveController::class, 'create'])->name('adhesive.create');
     Route::post('/adhesive', [AdhesiveController::class, 'store'])->name('adhesive.store');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-    Route::get('/index', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/show-products', [ProductController::class, 'index'])->name('products.show');
     Route::get('/companiess', [CompanyController::class, 'index'])->name('companies.index');
     Route::get('/create-categories', [CategoryController::class, 'create'])->name('category.create');
     Route::get('/index-categories', [CategoryController::class, 'index'])->name('category.index');
@@ -47,8 +47,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/index-sample', [SampleController::class, 'index'])->name('sample.index');
     Route::get('/create-zones', [zoneController::class, 'create'])->name('zones.create');
     Route::get('/index-zones', [zoneController::class, 'index'])->name('zones.index');
+    Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
 
-
+    Route::get('/edit-product-image/{id}/{product_id}', [ProductController::class, 'editProductImage'])->name('product.image.edit');
+    Route::put('/update-product-image/{id}', [ProductController::class, 'updateProductImage'])->name('product.image.update');
+   
     // Route::resource('companies', CompanyController::class);
 
 });

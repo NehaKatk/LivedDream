@@ -52,7 +52,7 @@
     <div class="sidebar">
         <a href="#"><i class="fa-solid fa-th"></i> Dashboard</a>
     <a href="#"><i class="fa-light fa-memo"></i> Quotations</a>
-    <a href="/products">Products</a>
+    <a href="/show-products">Products</a>
     <a href="/companies">Companies</a>
     <a href="#">Categories</a>
     <a href="#">Zones</a>

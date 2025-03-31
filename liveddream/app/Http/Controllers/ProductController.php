@@ -7,10 +7,13 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Models\ProductSample;
 use App\Models\ProductSize;
 use Carbon\Carbon;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class ProductController extends Controller
 {
@@ -19,7 +22,14 @@ class ProductController extends Controller
      */
     public function index()
     {
-      
+        $products = Product::with([
+            'images',
+            'category:id,name',  // Fetch only 'id' and 'name' from Category
+            'company:id,name'   // Fetch only 'id' and 'name' from Company
+        ])
+        ->get();
+     
+        return view('products.index', compact('products'));
     }
 
     /**
@@ -50,12 +60,14 @@ class ProductController extends Controller
             'company_id' => $request->company_id,
             'category_id' => $request->category_id,
             'name' => $request->name,
+            'app_area' => $request->app_area,
             'gst' => $request->gst,
             'warranty_duration' => $request->warranty_duration,
             'warranty_type' => $request->warranty_type,
             'adhesive_id' => $request->adhesive_id,
-            'labor_charges' => $request->labor_charges,
-            'delivery_time' => $request->estimated_delivery_time,
+            'labor_charge' => $request->labor_charges ?? 0,
+            'estimate_delivery_duration' => $request->estimated_delivery_time,
+            'estimate_delivery_type' => $request->estimated_delivery_type,
             'user_id' => auth()->id(),
         ]);
 
@@ -180,7 +192,7 @@ if ($request->hasFile('sample_image')) {
     $this->storeProductImages($request->file('sample_image'), $product->id, 1);
 }
         
-        return redirect()->back()->with('success', 'Product added successfully!');
+return redirect()->route('products.show')->with('success', 'Product added successfully!');
     }
     // private function storeProductImages($files, $productId, $sampleStatus)
     // {
@@ -215,69 +227,43 @@ if ($request->hasFile('sample_image')) {
     private function storeProductImages($files, $productId, $sampleStatus, $key = 0)
     {
         $imageData = [];
+        $sampleData = [];
+        $userId = auth()->id();
+        $timestamp = now();
     
-        if (is_string($files)) {
-            // Handling base64 images
-            $imageEntry = [
-                'product_id' => $productId,
-                'product_image' => $files, // Directly use path from base64 processing
-                'sample_status' => $sampleStatus,
-                'user_id' => auth()->id(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+        foreach ((array) $files as $key => $file) {
+            $imagePath = is_string($file) ? $file : 'storage/' . $file->storeAs('product_images', time() . "_$key." . $file->getClientOriginalExtension(), 'public');
     
-            // Add extra fields only if sample_status is 1
             if ($sampleStatus == 0) {
-                $imageEntry = array_merge($imageEntry, [
+                // Store in `product_images`
+                $imageData[] = [
                     'pdf_name' => request("product_name.$key", null),
+                    'product_id' => $productId,
+                    'product_image' => $imagePath,
                     'product_code' => request("product_code.$key", null),
                     'product_color' => request("product_color.$key", null),
                     'purchase_cost' => request("purchase_cost.$key", 0),
                     'selling_price' => request("selling_price.$key", 0),
                     'discount_price' => request("discount_price.$key", 0),
                     'stock_available' => request("stock_available.$key", 0),
-                ]);
-                 // Log the merged data
-                Log::info("Product Image Data (SampleStatus 0 - Base64)", $imageEntry);
-            }
-    
-            $imageData[] = $imageEntry;
-        } else {
-            // Handling file uploads
-            foreach ((array) $files as $key => $image) {
-                $imageName = time() . "_$key." . $image->getClientOriginalExtension();
-                $imagePath = $image->storeAs('product_images', $imageName, 'public');
-    
-                $imageEntry = [
-                    'product_id' => $productId,
-                    'product_image' => 'storage/' . $imagePath,
-                    'sample_status' => $sampleStatus,
-                    'user_id' => auth()->id(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
+                    'user_id' => $userId,
+                    'created_at' => $timestamp,
+                    'updated_at' => $timestamp,
                 ];
-    
-                // Add extra fields only if sample_status is 1
-                if ($sampleStatus == 0) {
-                    $imageEntry = array_merge($imageEntry, [
-                        'pdf_name' => request("product_name.$key", null),
-                        'product_code' => request("product_code.$key", null),
-                        'product_color' => request("product_color.$key", null),
-                        'purchase_cost' => request("purchase_cost.$key", 0),
-                        'selling_price' => request("selling_price.$key", 0),
-                        'discount_price' => request("discount_price.$key", 0),
-                        'stock_available' => request("stock_available.$key", 0),
-                    ]);
-                     // Log the merged data
-                Log::info("Product Image Data (SampleStatus 0 - File Upload)", $imageEntry);
-                }
-    
-                $imageData[] = $imageEntry;
+            } else {
+                // Store in `product_samples`
+                $sampleData[] = [
+                    'product_id' => $productId,
+                    'sample_image' => $imagePath,
+                    'user_id' => $userId,
+                    'created_at' => $timestamp,
+                    'updated_at' => $timestamp,
+                ];
             }
         }
     
-        ProductImage::insert($imageData);
+        if (!empty($imageData)) ProductImage::insert($imageData);
+        if (!empty($sampleData)) ProductSample::insert($sampleData);
     }
     
 private function processBase64Image($image, $productId, $sampleStatus, $key = 0)
@@ -312,9 +298,20 @@ private function processBase64Image($image, $productId, $sampleStatus, $key = 0)
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
+    public function edit($id)
     {
-        //
+        $companies = Company::select('id', 'name')->get();
+        $categories = Category::select('id', 'name')->get();
+        $adhesives = Adhesive::select('id', 'name')->get();
+        $product = Product::with([
+            'images',
+            'category:id,name',
+            'company:id,name',
+            'sizes'
+        ])->findOrFail($id);
+     
+        // dd($product);
+        return view('products.edit', compact('product','categories','companies','adhesives'));
     }
 
     /**
@@ -324,6 +321,59 @@ private function processBase64Image($image, $productId, $sampleStatus, $key = 0)
     {
         //
     }
+
+
+    public function editProductImage( $id, $productId)
+    {
+        Session::put('previous_url', url()->previous());
+        $product = ProductImage::findOrFail($id); // Find the product using product ID
+      
+        return view('product_images.edit', compact('product'));
+    }
+    public function updateProductImage(Request $request, $id)
+{
+    $product = ProductImage::findOrFail($id);
+
+    // Validate request
+    $request->validate([
+        'pdf_name' => 'nullable|string|max:255',
+        'product_code' => 'nullable|string|max:50',
+        'product_color' => 'nullable|string|max:50',
+        'purchase_cost' => 'required|numeric|min:0',
+        'selling_price' => 'required|numeric|min:0',
+        'discount_price' => 'nullable|numeric|min:0',
+        'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
+    ]);
+
+    // Handle file upload
+    if ($request->hasFile('product_image')) {
+        $imagePath = $request->file('product_image')->store('product_images', 'public');
+
+        // Delete old image if exists
+        if ($product->product_image && file_exists(public_path($product->product_image))) {
+            unlink(public_path($product->product_image));
+        }
+
+        $product->product_image = 'storage/' . $imagePath;
+    }
+
+    // Update product details
+    $product->pdf_name = $request->pdf_name;
+    $product->product_code = $request->product_code;
+    $product->product_color = $request->product_color;
+    $product->purchase_cost = $request->purchase_cost;
+    $product->selling_price = $request->selling_price;
+    $product->discount_price = $request->discount_price;
+    $product->stock_available = $request->stock_available == 'on'? 1: 0;
+
+    $product->save();
+    // dd($product);
+
+   
+    return redirect(Session::pull('previous_url', route('products.show')))
+    ->with('success', 'Product updated successfully!');
+
+}
 
     /**
      * Remove the specified resource from storage.
