@@ -55,8 +55,8 @@
     <a href="/show-products">Products</a>
     <a href="/companies">Companies</a>
     <a href="#">Categories</a>
-    <a href="#">Zones</a>
-    <a href="/adhesive">Adhesive</a>
+    <a href="/zones">Zones</a>
+    <a href="/adhesives">Adhesive</a>
     <a href="#">Samples</a>
     <a href="#">Users</a>
     </div>

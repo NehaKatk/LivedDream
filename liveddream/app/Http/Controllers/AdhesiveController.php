@@ -13,7 +13,8 @@ class AdhesiveController extends Controller
      */
     public function index()
     {
-        //
+        $adhesives = Adhesive::with('company')->get();
+        return view('adhesive.index', compact('adhesives'));
     }
 
     /**
@@ -61,9 +62,14 @@ class AdhesiveController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Adhesive $adhesive)
+    public function edit( $id)
     {
-        //
+      
+            $adhesive = Adhesive::findOrFail($id);
+            $companies = Company::all();
+            return view('adhesive.edit', compact('adhesive', 'companies'));
+        
+    
     }
 
     /**

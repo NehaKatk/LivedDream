@@ -6,7 +6,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\AdhesiveController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SampleController;
-use App\Http\Controllers\zoneController;
+use App\Http\Controllers\ZoneController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/companies', [CompanyController::class, 'store'])->name('companies.store');
     Route::get('/adhesive', [AdhesiveController::class, 'create'])->name('adhesive.create');
     Route::post('/adhesive', [AdhesiveController::class, 'store'])->name('adhesive.store');
+    Route::get('/adhesives', [AdhesiveController::class, 'index'])->name('adhesive.index');
+Route::get('/adhesive/edit/{id}', [AdhesiveController::class, 'edit'])->name('adhesive.edit');
+Route::put('/adhesive/update/{id}', [AdhesiveController::class, 'update'])->name('adhesive.update');
+Route::delete('/adhesive/destroy/{id}', [AdhesiveController::class, 'destroy'])->name('adhesive.destroy');
+
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
     Route::get('/show-products', [ProductController::class, 'index'])->name('products.show');
     Route::get('/companiess', [CompanyController::class, 'index'])->name('companies.index');
@@ -45,8 +50,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/index-categories', [CategoryController::class, 'index'])->name('category.index');
     Route::get('/create-sample', [SampleController::class, 'create'])->name('sample.create');
     Route::get('/index-sample', [SampleController::class, 'index'])->name('sample.index');
-    Route::get('/create-zones', [zoneController::class, 'create'])->name('zones.create');
-    Route::get('/index-zones', [zoneController::class, 'index'])->name('zones.index');
+   
+
+    Route::get('/zones', [ZoneController::class, 'index'])->name('zones.index');
+    Route::get('/zones/create', [ZoneController::class, 'create'])->name('zones.create');
+    Route::post('/zones', [ZoneController::class, 'store'])->name('zones.store');
+    Route::get('/zones/{id}/edit', [ZoneController::class, 'edit'])->name('zones.edit');
+    Route::post('/zones/{id}', [ZoneController::class, 'update'])->name('zones.update');
+    Route::post('/zones/{id}/delete', [ZoneController::class, 'destroy'])->name('zones.destroy');
+    
     Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
 

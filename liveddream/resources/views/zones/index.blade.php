@@ -7,7 +7,7 @@
         <div class="col-md-12 p-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h2 class="fw-bold">Zone Management</h2>
-                <button class="btn btn-primary px-3"><i class="fas fa-plus"></i> Add New Zone</button>
+                <a class="btn btn-primary px-3" href="/zones/create"><i class="fas fa-plus"></i> Add New Zone</a>
             </div>
 
             <!-- Search & Filter -->
@@ -51,27 +51,39 @@
                     </thead>
 
                     <tbody>
+                        
+                        <?php
+                            $iteration = 1
+                        ?>
+                        @foreach($zones as $zone)
                         <tr>
-                            <td><input type="checkbox" class="selectItem" style="display: none;"></td>
-                            <td>1</td>
-                            <td>ABC Interior</td>
-                            <td>aaa</td>
                             <td></td>
-                           
+                            <td>{{  $iteration++ }}</td>
+                            <td>{{ $zone->name }}</td>
+                            <td>{{ $zone->area }} .</td>
                             
                             <td>
-                                <div class="dropdown">
-                                    <button class="btn btn-light " data-bs-toggle="dropdown">
-                                        <!-- <i class="fas fa-eye"></i> -->
-                                        <img src="img/Group (1).png" alt="">
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li><a class="dropdown-item" href="#">Edit</a></li>
-                                        <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
-                                    </ul>
-                                </div>
+                                
+                                <button class="btn btn-light " data-bs-toggle="dropdown">
+                                    <!-- <i class="fas fa-eye"></i> -->
+                                    <i class="fa-solid fa-ellipsis-vertical"></i> <!-- Three-dot icon -->
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{{ route('zones.edit', $zone->id) }}" class="dropdown-item">Edit</a>
+
+                                    </li>
+                                    <li>
+                                        <form action="{{ route('zones.destroy', $zone->id) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item text-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
+                                    </li>
+                                </ul>
                             </td>
                         </tr>
+                        {{-- {{ $iteration++ } --}}
+                    @endforeach
                     </tbody>
                 </table>
             </div>
