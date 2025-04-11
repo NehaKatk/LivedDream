@@ -21,5 +21,8 @@ class Company extends Model
         {
             return $this->hasMany(Product::class, 'company_id');
         }
-        
+        public function adhesives()
+        {
+            return $this->hasMany(Adhesive::class, 'company_id');
+        }
 }

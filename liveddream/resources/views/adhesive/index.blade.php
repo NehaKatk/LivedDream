@@ -5,8 +5,8 @@
             <!-- Main Content -->
             <div class="col-md-12 p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="fw-bold">Zone Management</h2>
-                    <a class="btn btn-primary px-3" href="/zones/create"><i class="fas fa-plus"></i> Add New Zone</a>
+                    <h2 class="fw-bold">Adhesive Management</h2>
+                    <a class="btn btn-primary px-3" href="/adhesive"><i class="fas fa-plus"></i> Add New Adhesive</a>
                 </div>
 
                 <!-- Search & Filter -->
